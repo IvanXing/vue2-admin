@@ -8,11 +8,9 @@
       autocomplete="on"
       label-position="left"
     >
-
       <div class="title-container">
         <h3 class="title">小慕读书</h3>
       </div>
-
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -27,7 +25,6 @@
           autocomplete="on"
         />
       </el-form-item>
-
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
         <el-form-item prop="password">
           <span class="svg-container">
@@ -51,7 +48,6 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
       <el-button
         :loading="loading"
         type="primary"
@@ -64,21 +60,19 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
-
 export default {
   name: 'Login',
   data() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
+      if (!value || value.length === 0) {
+        callback(new Error('请输入用户名'))
       } else {
         callback()
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 6) {
-        callback(new Error('密码不能少于6位'))
+      if (value.length < 4) {
+        callback(new Error('密码不能少于4位'))
       } else {
         callback()
       }
@@ -86,10 +80,10 @@ export default {
     return {
       loginForm: {
         username: 'admin',
-        password: '111111'
+        password: 'admin'
       },
       loginRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
+        username: [{ required: true, trigger: 'change', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       passwordType: 'password',
@@ -121,12 +115,15 @@ export default {
   },
   methods: {
     checkCapslock({ shiftKey, key } = {}) {
+      console.log(shiftKey, key)
       if (key && key.length === 1) {
-        if (shiftKey && (key >= 'a' && key <= 'z') || !shiftKey && (key >= 'A' && key <= 'Z')) {
+        if ((shiftKey && (key >= 'A' && key <= 'Z')) || (!shiftKey && (key >= 'A' && key <= 'Z'))) {
           this.capsTooltip = true
         } else {
           this.capsTooltip = false
         }
+      } else {
+        this.capsTooltip = false
       }
       if (key === 'CapsLock' && this.capsTooltip === true) {
         this.capsTooltip = false
